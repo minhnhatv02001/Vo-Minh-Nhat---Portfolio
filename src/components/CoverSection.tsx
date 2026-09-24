@@ -1,22 +1,8 @@
-import React, { useRef, useState } from 'react';
-import { Volume2, VolumeX, Play, Pause, Sparkles } from 'lucide-react';
-import { useSound } from '../context/SoundContext';
+import React from 'react';
+import { Sparkles } from 'lucide-react';
+import { PROFILE } from '../data/profile';
 
 export const CoverSection: React.FC = () => {
-  const { isMuted, toggleMute } = useSound();
-  const [isPlaying, setIsPlaying] = useState(true);
-  const videoRef = useRef<HTMLVideoElement>(null);
-
-  const togglePlay = () => {
-    if (!videoRef.current) return;
-    if (videoRef.current.paused) {
-      videoRef.current.play();
-      setIsPlaying(true);
-    } else {
-      videoRef.current.pause();
-      setIsPlaying(false);
-    }
-  };
 
   return (
     <section id="cover" className="relative min-h-screen w-full flex items-center justify-center overflow-hidden bg-forest-950 pt-20 pb-16">
@@ -66,51 +52,21 @@ export const CoverSection: React.FC = () => {
               </div>
             </div>
 
-            {/* Curved Glass CRT Screen with Live Video */}
-            <div className="relative flex-1 rounded-[22px] overflow-hidden bg-black crt-screen border-2 border-black/80 shadow-inner group cursor-pointer" onClick={togglePlay}>
-              <video
-                ref={videoRef}
-                src="/footage/Real Estate.mp4"
-                className="w-full h-full object-cover filter contrast-[1.08] saturate-[1.12]"
-                autoPlay
-                loop
-                muted={isMuted}
-                playsInline
+            {/* Curved Glass CRT Screen with Personal Portrait */}
+            <div className="relative flex-1 rounded-[22px] overflow-hidden bg-black crt-screen border-2 border-black/80 shadow-inner group">
+              <img
+                src={PROFILE.portrait}
+                alt="Minh Nhật - Video Editor / Content Creative"
+                className="w-full h-full object-cover object-[center_18%] filter contrast-[1.06] saturate-[1.04]"
               />
 
               {/* Glass Scanlines & Screen Curvature Glare */}
               <div className="absolute inset-0 bg-gradient-to-tr from-white/10 via-transparent to-black/40 pointer-events-none" />
 
-              {/* Subtle Screen Badge / Rec indicator */}
+              {/* Subtle Screen Badge / Live indicator */}
               <div className="absolute top-3 left-3 z-20 flex items-center gap-1.5 px-2.5 py-1 rounded bg-black/60 backdrop-blur text-[10px] font-mono text-emerald-400 border border-white/10">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                <span>CH-01 · REEL</span>
-              </div>
-
-              {/* Quick Play/Pause & Sound Indicator on hover */}
-              <div className="absolute bottom-3 right-3 z-20 flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    togglePlay();
-                  }}
-                  className="p-2 rounded-full bg-black/70 hover:bg-black text-white/80 hover:text-white border border-white/10 transition-colors"
-                  aria-label={isPlaying ? 'Pause video' : 'Play video'}
-                >
-                  {isPlaying ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5 fill-current" />}
-                </button>
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    toggleMute();
-                  }}
-                  className="p-2 rounded-full bg-black/70 hover:bg-black text-white/80 hover:text-white border border-white/10 transition-colors"
-                  aria-label={isMuted ? 'Bật tiếng' : 'Tắt tiếng'}
-                >
-                  {isMuted ? <VolumeX className="w-3.5 h-3.5 text-white/60" /> : <Volume2 className="w-3.5 h-3.5 text-gold-400" />}
-                </button>
+                <span>CH-01 · LIVE</span>
               </div>
             </div>
 

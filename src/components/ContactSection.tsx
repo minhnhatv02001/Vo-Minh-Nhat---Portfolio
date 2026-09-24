@@ -30,10 +30,10 @@ export const ContactSection: React.FC = () => {
     <footer id="contact" className="relative w-full min-h-[90vh] flex flex-col justify-between items-center bg-forest-950 text-white overflow-hidden pt-24 pb-12 px-4 sm:px-6 lg:px-12">
       {/* Background with Sunlit Canopy Rays Matching Reference 12 */}
       <div className="absolute inset-0 pointer-events-none">
-        {/* Reference 12 Background Image Backdrop */}
+        {/* Clean Forest Background Image Backdrop */}
         <div 
-          className="absolute inset-0 bg-cover bg-center opacity-70 mix-blend-screen scale-105 filter contrast-110"
-          style={{ backgroundImage: `url('/references/portfolio-reference/12-reference-ending-contact.png')` }}
+          className="absolute inset-0 bg-cover bg-center opacity-70 scale-105 filter contrast-110"
+          style={{ backgroundImage: `url('/images/contact-bg-clean.png')` }}
         />
         {/* Soft atmospheric gradient transitions */}
         <div className="absolute inset-0 bg-gradient-to-t from-forest-950 via-forest-950/40 to-transparent" />

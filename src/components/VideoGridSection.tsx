@@ -2,6 +2,7 @@ import React from 'react';
 import { Play, MonitorPlay } from 'lucide-react';
 import { Project } from '../data/projects';
 import { useSound } from '../context/SoundContext';
+import { SmartVideo } from './SmartVideo';
 
 interface VideoGridSectionProps {
   projects: Project[];
@@ -56,13 +57,10 @@ export const VideoGridSection: React.FC<VideoGridSectionProps> = ({
             >
               <div className="relative aspect-video w-full rounded-2xl overflow-hidden glass-panel border border-white/15 p-2 shadow-2xl group-hover:border-gold-500/50 group-hover:shadow-glow-gold transition-all duration-500">
                 <div className="relative w-full h-full rounded-xl overflow-hidden bg-black">
-                  <video
+                  <SmartVideo
                     src={item.assetPath}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                    autoPlay
-                    loop
-                    muted={isMuted}
-                    playsInline
+                    isMuted={isMuted}
                   />
 
                   {/* Gradient Vignette */}

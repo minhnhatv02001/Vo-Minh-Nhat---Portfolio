@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Play, Film } from 'lucide-react';
 import { Project } from '../data/projects';
 import { useSound } from '../context/SoundContext';
+import { SmartVideo } from './SmartVideo';
 
 interface ShortVideoGalleryProps {
   projects: Project[];
@@ -59,13 +60,12 @@ export const ShortVideoGallery: React.FC<ShortVideoGalleryProps> = ({
                 {/* 9:16 Aspect Ratio Card */}
                 <div className="relative aspect-[9/16] w-full rounded-2xl overflow-hidden glass-panel border border-white/10 p-1 shadow-lg group-hover:border-gold-500/60 group-hover:shadow-glow-gold transition-all duration-300">
                   <div className="relative w-full h-full rounded-xl overflow-hidden bg-black">
-                    <video
+                    <SmartVideo
                       src={item.assetPath}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                      autoPlay
-                      loop
-                      muted={isMuted}
-                      playsInline
+                      isMuted={isMuted}
+                      playOnHover={true}
+                      isHovered={isHovered}
                     />
 
                     {/* Gradient Overlay */}

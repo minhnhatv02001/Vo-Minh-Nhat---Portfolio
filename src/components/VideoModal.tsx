@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { X, Play, Pause, Volume2, VolumeX, Maximize2, Tag } from 'lucide-react';
-import { Project } from '../data/projects';
+import { Project, getCloudinaryPoster, getOptimizedVideoSrc } from '../data/projects';
+import { useSound } from '../context/SoundContext';
 
 interface VideoModalProps {
   project: Project | null;
@@ -9,12 +10,35 @@ interface VideoModalProps {
 
 export const VideoModal: React.FC<VideoModalProps> = ({ project, onClose }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const progressBarRef = useRef<HTMLDivElement>(null);
+  const timeDisplayRef = useRef<HTMLSpanElement>(null);
+  const { setIsModalOpen } = useSound();
+
   const [isPlaying, setIsPlaying] = useState(true);
   const [isMuted, setIsMuted] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const [currentTime, setCurrentTime] = useState('0:00');
-  const [duration, setDuration] = useState('0:00');
 
+  // Sync global modal open state & pause all background gallery videos immediately
+  useEffect(() => {
+    if (!project) return;
+    setIsModalOpen(true);
+
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    // Ensure all other video elements in the DOM stop decoding and rendering
+    document.querySelectorAll('video').forEach((v) => {
+      if (v !== videoRef.current) {
+        v.pause();
+      }
+    });
+
+    return () => {
+      setIsModalOpen(false);
+      document.body.style.overflow = originalOverflow;
+    };
+  }, [project, setIsModalOpen]);
+
+  // Handle keyboard shortcuts (Escape to close, Space to toggle play)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
@@ -27,74 +51,103 @@ export const VideoModal: React.FC<VideoModalProps> = ({ project, onClose }) => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [onClose]);
 
+  // Handle video source initialization and playback
   useEffect(() => {
-    if (project && videoRef.current) {
-      videoRef.current.currentTime = 0;
-      videoRef.current.play().then(() => setIsPlaying(true)).catch(() => setIsPlaying(false));
+    const v = videoRef.current;
+    if (!v || !project) return;
+
+    v.currentTime = 0;
+    v.muted = isMuted;
+
+    // Reset progress UI refs directly without triggering React re-renders
+    if (progressBarRef.current) progressBarRef.current.style.width = '0%';
+    if (timeDisplayRef.current) timeDisplayRef.current.textContent = '0:00 / 0:00';
+
+    const playPromise = v.play();
+    if (playPromise !== undefined) {
+      playPromise
+        .then(() => setIsPlaying(true))
+        .catch(() => {
+          // If browser restricts unmuted playback, fallback to muted autoplay
+          v.muted = true;
+          setIsMuted(true);
+          v.play().then(() => setIsPlaying(true)).catch(() => setIsPlaying(false));
+        });
     }
   }, [project]);
 
   if (!project) return null;
 
   const togglePlay = () => {
-    if (!videoRef.current) return;
-    if (videoRef.current.paused) {
-      videoRef.current.play();
-      setIsPlaying(true);
+    const v = videoRef.current;
+    if (!v) return;
+    if (v.paused) {
+      v.play().then(() => setIsPlaying(true)).catch(() => {});
     } else {
-      videoRef.current.pause();
+      v.pause();
       setIsPlaying(false);
     }
   };
 
   const toggleMute = () => {
-    if (!videoRef.current) return;
-    videoRef.current.muted = !videoRef.current.muted;
-    setIsMuted(videoRef.current.muted);
+    const v = videoRef.current;
+    if (!v) return;
+    v.muted = !v.muted;
+    setIsMuted(v.muted);
   };
 
+  // High-performance time update: updates DOM nodes directly with ZERO React re-renders
   const handleTimeUpdate = () => {
-    if (!videoRef.current) return;
-    const cur = videoRef.current.currentTime;
-    const dur = videoRef.current.duration || 1;
-    setProgress((cur / dur) * 100);
+    const v = videoRef.current;
+    if (!v) return;
 
-    const curM = Math.floor(cur / 60);
-    const curS = Math.floor(cur % 60).toString().padStart(2, '0');
-    setCurrentTime(`${curM}:${curS}`);
+    const cur = v.currentTime;
+    const dur = v.duration || 1;
+    const pct = Math.min(100, Math.max(0, (cur / dur) * 100));
 
-    const durM = Math.floor(dur / 60);
-    const durS = Math.floor(dur % 60).toString().padStart(2, '0');
-    setDuration(`${durM}:${durS}`);
+    if (progressBarRef.current) {
+      progressBarRef.current.style.width = `${pct}%`;
+    }
+
+    if (timeDisplayRef.current) {
+      const curM = Math.floor(cur / 60);
+      const curS = Math.floor(cur % 60).toString().padStart(2, '0');
+      const durM = Math.floor(dur / 60);
+      const durS = Math.floor(dur % 60).toString().padStart(2, '0');
+      timeDisplayRef.current.textContent = `${curM}:${curS} / ${durM}:${durS}`;
+    }
   };
 
   const handleSeek = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!videoRef.current) return;
+    const v = videoRef.current;
+    if (!v) return;
     const rect = e.currentTarget.getBoundingClientRect();
-    const pos = (e.clientX - rect.left) / rect.width;
-    videoRef.current.currentTime = pos * (videoRef.current.duration || 0);
+    const pos = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+    v.currentTime = pos * (v.duration || 0);
+    handleTimeUpdate();
   };
 
   const toggleFullscreen = () => {
-    if (!videoRef.current) return;
+    const v = videoRef.current;
+    if (!v) return;
     if (document.fullscreenElement) {
       document.exitFullscreen();
     } else {
-      videoRef.current.requestFullscreen();
+      v.requestFullscreen();
     }
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 md:p-10 bg-black/90 backdrop-blur-xl animate-fadeIn">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 md:p-10 bg-black/92">
       {/* Background click to dismiss */}
       <div className="absolute inset-0" onClick={onClose} />
 
-      {/* Main modal container */}
-      <div className="relative z-10 max-w-5xl w-full max-h-[92vh] flex flex-col md:flex-row rounded-3xl overflow-hidden glass-panel border border-white/15 shadow-2xl bg-forest-950/95">
+      {/* Main modal container (GPU-efficient: zero backdrop-filter) */}
+      <div className="relative z-10 max-w-5xl w-full max-h-[92vh] flex flex-col md:flex-row rounded-3xl overflow-hidden border border-white/15 shadow-2xl bg-forest-950">
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 z-20 p-2.5 rounded-full bg-black/60 hover:bg-black/90 text-white/80 hover:text-white transition-colors border border-white/10"
+          className="absolute top-4 right-4 z-20 p-2.5 rounded-full bg-black/70 hover:bg-black text-white/80 hover:text-white transition-colors border border-white/10"
           aria-label="Đóng"
         >
           <X className="w-5 h-5" />
@@ -104,10 +157,12 @@ export const VideoModal: React.FC<VideoModalProps> = ({ project, onClose }) => {
         <div className="relative flex-1 bg-black flex items-center justify-center min-h-[360px] md:min-h-[580px] max-h-[70vh] md:max-h-[85vh]">
           <video
             ref={videoRef}
-            src={project.assetPath}
+            src={getOptimizedVideoSrc(project.assetPath)}
+            poster={getCloudinaryPoster(project.assetPath)}
             className="w-full h-full object-contain max-h-[85vh]"
             playsInline
             loop
+            preload="auto"
             onTimeUpdate={handleTimeUpdate}
             onClick={togglePlay}
           />
@@ -118,22 +173,22 @@ export const VideoModal: React.FC<VideoModalProps> = ({ project, onClose }) => {
             className="absolute inset-0 cursor-pointer flex items-center justify-center group"
           >
             {!isPlaying && (
-              <div className="p-5 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-white shadow-2xl scale-110 transition-transform">
+              <div className="p-5 rounded-full bg-black/70 border border-white/20 text-white shadow-2xl scale-110 transition-transform">
                 <Play className="w-8 h-8 fill-current translate-x-0.5" />
               </div>
             )}
           </div>
 
           {/* Minimal Bottom Player Controls */}
-          <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/90 via-black/40 to-transparent flex flex-col gap-2">
+          <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/95 via-black/50 to-transparent flex flex-col gap-2">
             {/* Scrubber Bar */}
             <div
               onClick={handleSeek}
               className="w-full h-1.5 bg-white/20 hover:h-2.5 rounded-full cursor-pointer transition-all relative overflow-hidden group"
             >
               <div
-                className="h-full bg-gold-500 rounded-full transition-all duration-75 relative"
-                style={{ width: `${progress}%` }}
+                ref={progressBarRef}
+                className="h-full bg-gold-500 rounded-full transition-all duration-75 relative w-0"
               >
                 <div className="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full shadow opacity-0 group-hover:opacity-100 transition-opacity" />
               </div>
@@ -142,19 +197,23 @@ export const VideoModal: React.FC<VideoModalProps> = ({ project, onClose }) => {
             <div className="flex items-center justify-between text-xs font-mono text-white/80 pt-1">
               <div className="flex items-center gap-3">
                 <button
+                  type="button"
                   onClick={togglePlay}
                   className="p-1 rounded hover:text-gold-500 transition-colors"
+                  aria-label={isPlaying ? 'Pause' : 'Play'}
                 >
                   {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4 fill-current" />}
                 </button>
                 <button
+                  type="button"
                   onClick={toggleMute}
                   className="p-1 rounded hover:text-gold-500 transition-colors"
+                  aria-label={isMuted ? 'Unmute' : 'Mute'}
                 >
                   {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
                 </button>
-                <span className="text-[11px] text-white/60">
-                  {currentTime} / {duration}
+                <span ref={timeDisplayRef} className="text-[11px] text-white/60">
+                  0:00 / 0:00
                 </span>
               </div>
 
@@ -163,8 +222,10 @@ export const VideoModal: React.FC<VideoModalProps> = ({ project, onClose }) => {
                   {project.aspectRatio}
                 </span>
                 <button
+                  type="button"
                   onClick={toggleFullscreen}
                   className="p-1 rounded hover:text-gold-500 transition-colors"
+                  aria-label="Fullscreen"
                 >
                   <Maximize2 className="w-4 h-4" />
                 </button>
@@ -174,7 +235,7 @@ export const VideoModal: React.FC<VideoModalProps> = ({ project, onClose }) => {
         </div>
 
         {/* Editorial Project Info Panel (Strictly no source filenames) */}
-        <div className="w-full md:w-80 lg:w-96 p-6 md:p-8 flex flex-col justify-between border-t md:border-t-0 md:border-l border-white/10 bg-forest-900/60">
+        <div className="w-full md:w-80 lg:w-96 p-6 md:p-8 flex flex-col justify-between border-t md:border-t-0 md:border-l border-white/10 bg-forest-900/90">
           <div>
             <div className="flex items-center justify-between mb-4">
               <span className="text-[11px] font-mono text-gold-500 tracking-widest font-semibold uppercase">

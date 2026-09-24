@@ -15,7 +15,7 @@ export interface Project {
 export const PROJECTS: Project[] = [
   {
     id: 'proj-commercial-real-estate',
-    assetPath: '/footage/Real Estate.mp4',
+    assetPath: 'https://res.cloudinary.com/orp3q7yx/video/upload/v1790196636/Real_Estate.mp4',
     category: '03 — COMMERCIAL CONTENT',
     categoryShort: 'COMMERCIAL',
     editorialNumber: '03.1',
@@ -28,7 +28,7 @@ export const PROJECTS: Project[] = [
   },
   {
     id: 'proj-travel-vinwonders',
-    assetPath: '/footage/VINWONDERS.mov',
+    assetPath: 'https://res.cloudinary.com/orp3q7yx/video/upload/v1790197888/VINWONDERS.mp4',
     category: '01 — TRAVEL & TOURISM',
     categoryShort: 'TRAVEL',
     editorialNumber: '01.1',
@@ -40,7 +40,7 @@ export const PROJECTS: Project[] = [
   },
   {
     id: 'proj-travel-coastal',
-    assetPath: '/footage/Vĩnh Hy.mp4',
+    assetPath: 'https://res.cloudinary.com/orp3q7yx/video/upload/v1790196302/Vi%CC%83nh_Hy.mov',
     category: '01 — TRAVEL & TOURISM',
     categoryShort: 'TRAVEL',
     editorialNumber: '01.2',
@@ -52,7 +52,7 @@ export const PROJECTS: Project[] = [
   },
   {
     id: 'proj-travel-tour',
-    assetPath: '/footage/Tour.mp4',
+    assetPath: 'https://res.cloudinary.com/orp3q7yx/video/upload/v1790196641/Tour.mp4',
     category: '01 — TRAVEL & TOURISM',
     categoryShort: 'TRAVEL',
     editorialNumber: '01.3',
@@ -64,7 +64,7 @@ export const PROJECTS: Project[] = [
   },
   {
     id: 'proj-review-culinary',
-    assetPath: '/footage 2/Review địa điểm.mp4',
+    assetPath: 'https://res.cloudinary.com/orp3q7yx/video/upload/v1790196659/Review_%C4%91%E1%BB%8Ba_%C4%91i%E1%BB%83m.mp4',
     category: '02 — DESTINATION & REVIEW',
     categoryShort: 'DESTINATION',
     editorialNumber: '02.1',
@@ -76,7 +76,7 @@ export const PROJECTS: Project[] = [
   },
   {
     id: 'proj-destination-island-escape',
-    assetPath: '/footage 2/Phú Quốc (3n2đ).mov',
+    assetPath: 'https://res.cloudinary.com/orp3q7yx/video/upload/v1790197885/Ph%C3%BA_Qu%E1%BB%91c_3n2%C4%91.mp4',
     category: '02 — DESTINATION & REVIEW',
     categoryShort: 'DESTINATION',
     editorialNumber: '02.2',
@@ -88,7 +88,7 @@ export const PROJECTS: Project[] = [
   },
   {
     id: 'proj-travel-heritage',
-    assetPath: '/footage 3/Hành trình di sản.mp4',
+    assetPath: 'https://res.cloudinary.com/orp3q7yx/video/upload/v1790196659/H%C3%A0nh_tr%C3%ACnh_di_s%E1%BA%A3n.mov',
     category: '01 — TRAVEL & TOURISM',
     categoryShort: 'TRAVEL',
     editorialNumber: '01.4',
@@ -100,7 +100,7 @@ export const PROJECTS: Project[] = [
   },
   {
     id: 'proj-travel-ninhbinh',
-    assetPath: '/footage 3/Ninh Bình.mp4',
+    assetPath: 'https://res.cloudinary.com/orp3q7yx/video/upload/v1790197880/Ninh_B%C3%ACnh.mp4',
     category: '01 — TRAVEL & TOURISM',
     categoryShort: 'TRAVEL',
     editorialNumber: '01.5',
@@ -112,7 +112,7 @@ export const PROJECTS: Project[] = [
   },
   {
     id: 'proj-destination-island-breeze',
-    assetPath: '/footage 3/Phú Quý.mp4',
+    assetPath: 'https://res.cloudinary.com/orp3q7yx/video/upload/v1790196661/Ph%C3%BA_Qu%C3%BD.mp4',
     category: '02 — DESTINATION & REVIEW',
     categoryShort: 'DESTINATION',
     editorialNumber: '02.3',
@@ -124,7 +124,7 @@ export const PROJECTS: Project[] = [
   },
   {
     id: 'proj-commercial-brand-pulse',
-    assetPath: '/footage 3/T.C.T.mp4',
+    assetPath: 'https://res.cloudinary.com/orp3q7yx/video/upload/v1790196661/T.C.T.mov',
     category: '03 — COMMERCIAL CONTENT',
     categoryShort: 'COMMERCIAL',
     editorialNumber: '03.2',
@@ -136,7 +136,7 @@ export const PROJECTS: Project[] = [
   },
   {
     id: 'proj-travel-hangzhou',
-    assetPath: '/footage 4/Hàng Châu.mp4',
+    assetPath: 'https://res.cloudinary.com/orp3q7yx/video/upload/v1790197880/H%C3%A0ng_Ch%C3%A2u.mp4',
     category: '01 — TRAVEL & TOURISM',
     categoryShort: 'TRAVEL',
     editorialNumber: '01.6',
@@ -148,7 +148,7 @@ export const PROJECTS: Project[] = [
   },
   {
     id: 'proj-travel-island-odyssey',
-    assetPath: '/footage 4/Phú Quốc - Phú Quý.mp4',
+    assetPath: 'https://res.cloudinary.com/orp3q7yx/video/upload/v1790197882/Ph%C3%BA_Qu%E1%BB%91c_-_Ph%C3%BA_Qu%C3%BD.mp4',
     category: '01 — TRAVEL & TOURISM',
     categoryShort: 'TRAVEL',
     editorialNumber: '01.7',
@@ -159,3 +159,5 @@ export const PROJECTS: Project[] = [
     tags: ['Travel', 'Expedition', 'Editing Flow'],
   },
 ];
+
+export { getCloudinaryPoster, getOptimizedVideoSrc } from '../utils/media';

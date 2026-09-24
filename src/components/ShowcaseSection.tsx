@@ -2,6 +2,7 @@ import React from 'react';
 import { Play, ArrowRight } from 'lucide-react';
 import { Project } from '../data/projects';
 import { useSound } from '../context/SoundContext';
+import { SmartVideo } from './SmartVideo';
 
 interface ShowcaseSectionProps {
   projects: Project[];
@@ -71,13 +72,10 @@ export const ShowcaseSection: React.FC<ShowcaseSectionProps> = ({
             >
               <div className="relative aspect-[9/16] w-full rounded-2xl overflow-hidden glass-panel border border-white/15 p-1.5 shadow-xl group-hover:border-gold-500/50 transition-all duration-300">
                 <div className="relative w-full h-full rounded-xl overflow-hidden bg-black">
-                  <video
+                  <SmartVideo
                     src={projVinwonders.assetPath}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    autoPlay
-                    loop
-                    muted={isMuted}
-                    playsInline
+                    isMuted={isMuted}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20 pointer-events-none" />
                   <div className="absolute top-3 left-3 px-2 py-0.5 rounded bg-black/60 backdrop-blur text-[10px] font-mono text-white/90">
@@ -110,13 +108,10 @@ export const ShowcaseSection: React.FC<ShowcaseSectionProps> = ({
             >
               <div className="relative aspect-[9/16] w-full rounded-2xl overflow-hidden glass-panel border border-white/15 p-1.5 shadow-xl group-hover:border-gold-500/50 transition-all duration-300">
                 <div className="relative w-full h-full rounded-xl overflow-hidden bg-black">
-                  <video
+                  <SmartVideo
                     src={projCoastal.assetPath}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    autoPlay
-                    loop
-                    muted={isMuted}
-                    playsInline
+                    isMuted={isMuted}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20 pointer-events-none" />
                   <div className="absolute top-3 left-3 px-2 py-0.5 rounded bg-black/60 backdrop-blur text-[10px] font-mono text-white/90">
@@ -149,13 +144,10 @@ export const ShowcaseSection: React.FC<ShowcaseSectionProps> = ({
             >
               <div className="relative flex-1 w-full rounded-2xl overflow-hidden glass-panel border border-white/15 p-2 shadow-xl group-hover:border-gold-500/50 transition-all duration-300 min-h-[300px] md:min-h-[auto]">
                 <div className="relative w-full h-full rounded-xl overflow-hidden bg-black">
-                  <video
+                  <SmartVideo
                     src={projTour.assetPath}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                    autoPlay
-                    loop
-                    muted={isMuted}
-                    playsInline
+                    isMuted={isMuted}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/30 pointer-events-none" />
                   
@@ -223,13 +215,10 @@ export const ShowcaseSection: React.FC<ShowcaseSectionProps> = ({
               >
                 <div className="relative aspect-[9/16] w-full rounded-2xl overflow-hidden glass-panel border border-white/15 p-1.5 shadow-xl group-hover:border-gold-500/50 group-hover:shadow-glow-gold transition-all duration-300">
                   <div className="relative w-full h-full rounded-xl overflow-hidden bg-black">
-                    <video
+                    <SmartVideo
                       src={item.assetPath}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                      autoPlay
-                      loop
-                      muted={isMuted}
-                      playsInline
+                      isMuted={isMuted}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20 pointer-events-none" />
                     
@@ -293,13 +282,10 @@ export const ShowcaseSection: React.FC<ShowcaseSectionProps> = ({
               >
                 <div className="relative aspect-[9/16] w-full rounded-2xl overflow-hidden glass-panel border border-white/15 p-2 shadow-xl group-hover:border-gold-500/50 transition-all duration-300">
                   <div className="relative w-full h-full rounded-xl overflow-hidden bg-black">
-                    <video
+                    <SmartVideo
                       src={item.assetPath}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                      autoPlay
-                      loop
-                      muted={isMuted}
-                      playsInline
+                      isMuted={isMuted}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20 pointer-events-none" />
                     

@@ -1,6 +1,6 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { Play, Maximize2, Tag } from 'lucide-react';
-import { Project } from '../data/projects';
+import { Project, getCloudinaryPoster, getOptimizedVideoSrc } from '../data/projects';
 import { useSound } from '../context/SoundContext';
 
 interface FeaturedSectionProps {
@@ -12,9 +12,36 @@ export const FeaturedSection: React.FC<FeaturedSectionProps> = ({
   featuredProject,
   onOpenProject,
 }) => {
-  const { isMuted } = useSound();
+  const { isMuted, isModalOpen } = useSound();
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isHovered, setIsHovered] = useState(false);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    video.muted = isMuted;
+
+    if (isModalOpen) {
+      video.pause();
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && !isModalOpen) {
+            video.play().catch(() => {});
+          } else {
+            video.pause();
+          }
+        });
+      },
+      { threshold: 0.2, rootMargin: '50px' }
+    );
+
+    observer.observe(video);
+    return () => observer.disconnect();
+  }, [isMuted, isModalOpen, featuredProject.assetPath]);
 
   return (
     <section id="featured" className="relative w-full py-24 px-4 sm:px-6 lg:px-12 bg-forest-950 overflow-hidden">
@@ -59,12 +86,13 @@ export const FeaturedSection: React.FC<FeaturedSectionProps> = ({
               <div className="relative aspect-[9/16] w-full rounded-[22px] overflow-hidden bg-black">
                 <video
                   ref={videoRef}
-                  src={featuredProject.assetPath}
+                  src={getOptimizedVideoSrc(featuredProject.assetPath)}
+                  poster={getCloudinaryPoster(featuredProject.assetPath)}
                   className="w-full h-full object-cover filter contrast-[1.05] brightness-[0.98] group-hover:scale-105 transition-transform duration-700"
-                  autoPlay
                   loop
                   muted={isMuted}
                   playsInline
+                  preload="metadata"
                 />
 
                 {/* Dark Vignette & Gradient Overlays */}
